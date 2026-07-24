@@ -27,17 +27,30 @@ jobs:
         env:
           CI: false
 
+      - name: Setup .NET Core 3.1
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '3.1.x'
+
+      - name: Setup .NET 6
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v2
 
-      - name: Restore NuGet packages
-        run: msbuild Typedown.sln -t:Restore -p:Configuration=Release -p:Platform=x64
+      - name: Restore with dotnet (using 3.1 SDK)
+        shell: pwsh
+        run: |
+          $env:DOTNET_ROLL_FORWARD="LatestPatch"
+          dotnet restore Typedown.sln -p:Configuration=Release -p:Platform=x64
 
       - name: Build Solution
-        run: msbuild Typedown.sln -p:Configuration=Release -p:Platform=x64 -p:AppxPackageSigningEnabled=false
+        run: msbuild Typedown.sln -p:Configuration=Release -p:Platform=x64 -p:AppxPackageSigningEnabled=false -restore:false
 
       - name: Create MSIX Package
-        run: msbuild Tools\Typedown.Package\Typedown.Package.wapproj -p:Configuration=Release -p:Platform=x64 -p:UapAppxPackageBuildMode=StoreUpload -p:AppxBundle=Never -p:AppxPackageSigningEnabled=false
+        run: msbuild Tools\Typedown.Package\Typedown.Package.wapproj -p:Configuration=Release -p:Platform=x64 -p:UapAppxPackageBuildMode=StoreUpload -p:AppxBundle=Never -p:AppxPackageSigningEnabled=false -restore:false
 
       - name: Find MSIX file
         id: find-msix
@@ -56,8 +69,9 @@ jobs:
               echo "msix_name=$($bundle.Name)" >> $env:GITHUB_OUTPUT
               Write-Host "Found MSIXBundle: $($bundle.FullName)"
             } else {
-              Write-Host "No MSIX or MSIXBundle found"
-              Get-ChildItem -Path .\Tools\Typedown.Package -Recurse -Include *.msix,*.msixbundle,*.appx,*.appxbundle | ForEach-Object { Write-Host $_.FullName }
+              Write-Host "Searching all package outputs..."
+              Get-ChildItem -Path .\Tools\Typedown.Package -Recurse -Include *.msix,*.msixbundle,*.appx,*.appxbundle 2>$null | ForEach-Object { Write-Host $_.FullName }
+              Get-ChildItem -Path .\AppPackages -Recurse -Include *.msix,*.msixbundle 2>$null | ForEach-Object { Write-Host $_.FullName }
               exit 1
             }
           }
