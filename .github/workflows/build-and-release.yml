@@ -24,15 +24,15 @@ jobs:
       - name: Build Typedown Editor
         working-directory: Dev/Typedown.Editor
         run: yarn install && yarn build
+        env:
+          CI: false
 
-      - name: Setup .NET Core 3.1
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '3.1.x'
-
-      - name: Install Windows App SDK Workload
-        run: |
-          dotnet workload install microsoft-net-sdk-windowsdesktop
+          dotnet-version: |
+            3.1.x
+            6.0.x
 
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v2
@@ -40,8 +40,8 @@ jobs:
       - name: Restore NuGet packages
         run: msbuild Typedown.sln -t:Restore -p:Configuration=Release -p:Platform=x64
 
-      - name: Build Solution with MSBuild
-        run: msbuild Typedown.sln -p:Configuration=Release -p:Platform=x64 -p:UapAppxPackageBuildMode=StoreUpload -p:AppxBundle=Never -p:AppxPackageSigningEnabled=false
+      - name: Build Solution
+        run: msbuild Typedown.sln -p:Configuration=Release -p:Platform=x64 -p:AppxPackageSigningEnabled=false
 
       - name: Create MSIX Package
         run: msbuild Tools\Typedown.Package\Typedown.Package.wapproj -p:Configuration=Release -p:Platform=x64 -p:UapAppxPackageBuildMode=StoreUpload -p:AppxBundle=Never -p:AppxPackageSigningEnabled=false
