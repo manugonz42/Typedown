@@ -27,13 +27,6 @@ jobs:
         env:
           CI: false
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: |
-            3.1.x
-            6.0.x
-
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v2
 
@@ -54,9 +47,19 @@ jobs:
           if ($msix) {
             echo "msix_path=$($msix.FullName)" >> $env:GITHUB_OUTPUT
             echo "msix_name=$($msix.Name)" >> $env:GITHUB_OUTPUT
+            Write-Host "Found MSIX: $($msix.FullName)"
           } else {
-            Write-Host "No MSIX file found"
-            exit 1
+            Write-Host "No MSIX file found, looking for MSIXBundle..."
+            $bundle = Get-ChildItem -Path . -Filter "*.msixbundle" -Recurse | Select-Object -First 1
+            if ($bundle) {
+              echo "msix_path=$($bundle.FullName)" >> $env:GITHUB_OUTPUT
+              echo "msix_name=$($bundle.Name)" >> $env:GITHUB_OUTPUT
+              Write-Host "Found MSIXBundle: $($bundle.FullName)"
+            } else {
+              Write-Host "No MSIX or MSIXBundle found"
+              Get-ChildItem -Path .\Tools\Typedown.Package -Recurse -Include *.msix,*.msixbundle,*.appx,*.appxbundle | ForEach-Object { Write-Host $_.FullName }
+              exit 1
+            }
           }
 
       - name: Upload MSIX artifact
