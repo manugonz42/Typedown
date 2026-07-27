@@ -21,12 +21,12 @@
 
 	<PropertyGroup Condition="'$(Platform)' == 'x64'">
 		<SelfContained>false</SelfContained>
-		<RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Platform)' == 'x86'">
 		<SelfContained>false</SelfContained>
-		<RuntimeIdentifier>win10-x86</RuntimeIdentifier>
+		<RuntimeIdentifier>win-x86</RuntimeIdentifier>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -55,7 +55,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="Resources\Statics\**" CopyToOutputDirectory="Always" Link="Resources\Statics\%(RecursiveDir)\%(Filename)%(Extension)" />
+		<None Include="Resources\Statics\**" CopyToOutputDirectory="Always" Link="Resources\Statics\%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
 
 	<ItemGroup>

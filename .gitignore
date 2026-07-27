@@ -348,3 +348,6 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# Yarn install-state cache (not needed in repo)
+Dev/Typedown.Editor/.yarn/
