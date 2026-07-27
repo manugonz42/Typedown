@@ -5,6 +5,8 @@
 
 [![Typedown Download](https://get.microsoft.com/images/en-us%20light.svg)](https://apps.microsoft.com/detail/9p8tcw4h2hb4)
 
+> 📦 Installation instructions (Store, MSIX sideload and building from source): see [INSTALL.md](INSTALL.md).
+
 Typedown is a lightweight Markdown editor designed specifically for the Windows platform. With the WinUI framework, it provides users with a seamless interface and efficient editing experience that perfectly matches the operating system. Whether you're writing technical documents, academic papers, or blog posts, Typedown is your go-to assistant!
 
 ## Screenshots
